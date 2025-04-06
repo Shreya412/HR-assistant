@@ -13,39 +13,31 @@ This is a Flask-based application that uses LangChain Agents to assist HR profes
 
 ### Project Structure
 
+```
 hr-app/
 ├── app.py                # Main Flask application
 ├── templates/
 │   └── index.html        # Frontend HTML template
 ├── requirements.txt      # Project dependencies
 └── README.md             # Project documentation
+```
 
 # Installation
 
 Clone the repository
 Create a virtual environment:
-Copypython -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+```python -m venv venv```
+```source venv/bin/activate  # On Windows: venv\Scripts\activate```
 
 Install dependencies:
-Copypip install -r requirements.txt
+```pip install -r requirements.txt```
 
-Set up your OpenAI API key:
-Copyexport OPENAI_API_KEY=your_api_key_here  # On Windows: set OPENAI_API_KEY=your_api_key_here
-
-
-Requirements
-Copyflask==2.2.3
-langchain==0.0.267
-openai==0.27.8
-python-dotenv==1.0.0
-
-Usage
+- Usage
 
 Run the Flask application:
-python app.py
+```python app.py```
 
-Open your web browser and navigate to http://127.0.0.1:5000
+Open your web browser and navigate to ```http://127.0.0.1:5000```
 
 #### Interact with the HR Assistant by typing in the chat interface
 #### Use the suggested quick prompts to explore different functionalities
