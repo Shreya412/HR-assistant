@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Assistant - Hiring Process Planner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #5469d4;
+            --secondary-color: #7886d7;
+            --light-color: #f8fafc;
+            --dark-color: #334155;
+            --accent-color: #fbbf24;
+            --success-color: #10b981;
+            --user-message-color: #e0f2fe;
+            --assistant-message-color: #f1f5f9;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .app-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .app-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .app-subtitle {
+            color: var(--dark-color);
+            font-weight: 400;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+        
+        .dashboard {
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-card {
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            background: white;
+            border: none;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .dashboard-card .card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+        
+        .dashboard-card h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0;
+            color: var(--primary-color);
+        }
+        
+        .dashboard-card-1 {
+            border-top: 4px solid #3b82f6;
+        }
+        
+        .dashboard-card-2 {
+            border-top: 4px solid #8b5cf6;
+        }
+        
+        .dashboard-card-3 {
+            border-top: 4px solid #ec4899;
+        }
+        
+        .dashboard-card-4 {
+            border-top: 4px solid #f59e0b;
+        }
+        
+        .card-icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+        
+        .chat-window {
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            background: white;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chat-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .chat-header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .chat-header-status {
+            background-color: #34d399;
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .chat-container {
+            height: 65vh;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background-color: white;
+            scrollbar-width: thin;
+            scrollbar-color: var(--secondary-color) transparent;
+        }
+        
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .chat-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: var(--secondary-color);
+            border-radius: 20px;
+        }
+        
+        .message {
+            margin-bottom: 1.25rem;
+            position: relative;
+            clear: both;
+            max-width: 85%;
+        }
+        
+        .message-content {
+            padding: 1rem 1.25rem;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            word-wrap: break-word;
+        }
+        
+        .user-message {
+            float: right;
+        }
+        
+        .user-message .message-content {
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .user-message .timestamp {
+            clear: both;
+            float: right;
+        }
+        
+        .assistant-message {
+            float: left;
+        }
+        
+        .assistant-message .message-content {
+            background-color: var(--assistant-message-color);
+            color: var(--dark-color);
+            border-bottom-left-radius: 4px;
+        }
+        
+        .assistant-message .timestamp {
+            clear: both;
+            float: left;
+        }
+        
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+        
+        .timestamp {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .typing-indicator {
+            padding: 0.75rem 1rem;
+            background-color: var(--assistant-message-color);
+            border-radius: 18px;
+            display: none;
+            width: 60px;
+            margin-bottom: 1rem;
+            position: relative;
+            float: left;
+        }
+        
+        .typing-indicator span {
+            height: 6px;
+            width: 6px;
+            background-color: #94a3b8;
+            display: inline-block;
+            border-radius: 50%;
+            animation: typing 1.3s ease-in-out infinite;
+            margin: 0 2px;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .suggestions-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        
+        .tool-suggestion {
+            font-size: 0.9rem;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tool-suggestion:hover {
+            background-color: #e0f2fe;
+            border-color: #bae6fd;
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .input-container {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            position: relative;
+        }
+        
+        .input-group {
+            margin-bottom: 0;
+        }
+        
+        .form-control {
+            border-radius: 12px !important;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: none;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(84, 105, 212, 0.25);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #4a5bd0;
+            border-color: #4a5bd0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-outline-secondary {
+            color: #64748b;
+            border-color: #cbd5e1;
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: #f1f5f9;
+            color: #334155;
+            border-color: #94a3b8;
+        }
+        
+        pre {
+            white-space: pre-wrap;
+            background-color: #f1f5f9;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 1rem;
+            }
+            
+            .dashboard-card .card-body {
+                padding: 1rem;
+            }
+            
+            .dashboard-card h2 {
+                font-size: 2rem;
+            }
+            
+            .chat-container {
+                height: 60vh;
+                padding: 1rem;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .message-content {
+                padding: 0.75rem 1rem;
+            }
+            
+            .tool-suggestion {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="app-header">
+            <h1 class="app-title display-4">HR Assistant</h1>
+            <p class="app-subtitle">Your AI partner for planning the perfect hiring process</p>
+        </div>
+
+        <div class="dashboard row mb-4">
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card dashboard-card dashboard-card-1">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">
+                            <i class="fas fa-file-alt card-icon"></i>Job Descriptions
+                        </h5>
+                        <h2 id="job-desc-count">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card dashboard-card dashboard-card-2">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">
+                            <i class="fas fa-users card-icon"></i>Interview Plans
+                        </h5>
+                        <h2 id="interview-count">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card dashboard-card dashboard-card-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">
+                            <i class="fas fa-tasks card-icon"></i>Eval Criteria
+                        </h5>
+                        <h2 id="criteria-count">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card dashboard-card dashboard-card-4">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">
+                            <i class="fas fa-chart-bar card-icon"></i>Analytics
+                        </h5>
+                        <h2 id="analytics-count">0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="chat-window">
+                    <div class="chat-header">
+                        <div class="chat-header-title">
+                            <span class="chat-header-status"></span>
+                            <span>HR Assistant</span>
+                        </div>
+                        <button class="btn btn-sm btn-outline-light" id="reset-button">
+                            <i class="fas fa-redo-alt me-1"></i>Reset
+                        </button>
+                    </div>
+                    
+                    <div class="chat-container" id="chat-container">
+                        <div class="assistant-message message clearfix">
+                            <div class="message-content">
+                                Hello! I'm your HR Assistant. I can help you plan your hiring process for your startup. How can I assist you today?
+                            </div>
+                            <div class="timestamp">Just now</div>
+                        </div>
+                        <div class="typing-indicator clearfix" id="typing-indicator">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suggestions-container" id="suggestions-container">
+                    <div class="tool-suggestion" onclick="suggestTool('job-description')">
+                        <i class="fas fa-file-alt"></i>Create Job Description
+                    </div>
+                    <div class="tool-suggestion" onclick="suggestTool('interview-process')">
+                        <i class="fas fa-users"></i>Plan Interview Process
+                    </div>
+                    <div class="tool-suggestion" onclick="suggestTool('evaluation-criteria')">
+                        <i class="fas fa-tasks"></i>Define Evaluation Criteria
+                    </div>
+                    <div class="tool-suggestion" onclick="suggestTool('hiring-analytics')">
+                        <i class="fas fa-chart-bar"></i>Generate Hiring Analytics
+                    </div>
+                </div>
+
+                <div class="input-container">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="user-input" placeholder="Type your message here...">
+                        <button class="btn btn-primary" type="button" id="send-button">
+                            <i class="fas fa-paper-plane me-1"></i>Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function suggestTool(tool) {
+            const userInput = document.getElementById('user-input');
+            let message = '';
+
+            switch(tool) {
+                case 'job-description':
+                    message = 'I need to create a job description for a Senior Software Engineer position. The requirements include 5+ years of experience with Python and cloud technologies. Our company is a fintech startup with 30 employees.';
+                    break;
+                case 'interview-process':
+                    message = 'Help me plan an interview process for a Marketing Manager role. We have a team of 4 people and need to hire within 6 weeks.';
+                    break;
+                case 'evaluation-criteria':
+                    message = 'Create evaluation criteria for a Product Manager position. Key skills needed are user research, agile methodologies, and data analysis. Our company values innovation, collaboration, and customer focus.';
+                    break;
+                case 'hiring-analytics':
+                    message = 'Generate hiring analytics for a UX Designer role. We expect about 100 applicants and want to hire within 8 weeks.';
+                    break;
+            }
+
+            userInput.value = message;
+            userInput.focus();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatContainer = document.getElementById('chat-container');
+            const userInput = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-button');
+            const resetButton = document.getElementById('reset-button');
+            const typingIndicator = document.getElementById('typing-indicator');
+
+            let jobDescCount = 0;
+            let interviewCount = 0;
+            let criteriaCount = 0;
+            let analyticsCount = 0;
+
+            loadChatHistory();
+
+            sendButton.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            resetButton.addEventListener('click', resetConversation);
+
+            function sendMessage() {
+                const message = userInput.value.trim();
+                if (message === '') return;
+
+                addMessageToChat('user', message);
+                userInput.value = '';
+
+                typingIndicator.style.display = 'block';
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    typingIndicator.style.display = 'none';
+
+                    if (data.response) {
+                        addMessageToChat('assistant', data.response);
+                        updateToolCounters(data.response);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    typingIndicator.style.display = 'none';
+                    addMessageToChat('assistant', 'Sorry, there was an error processing your request.');
+                });
+            }
+
+            function addMessageToChat(role, content) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = (role === 'user') ? 'user-message message clearfix' : 'assistant-message message clearfix';
+
+                const messageContent = document.createElement('div');
+                messageContent.className = 'message-content';
+                
+                const formattedContent = formatMessage(content);
+                messageContent.innerHTML = formattedContent;
+                messageDiv.appendChild(messageContent);
+
+                const timestamp = document.createElement('div');
+                timestamp.className = 'timestamp';
+                timestamp.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                messageDiv.appendChild(timestamp);
+
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            function formatMessage(content) {
+                let formatted = content.replace(/```([\s\S]*?)```/g, function(match, code) {
+                    return `<pre>${code}</pre>`;
+                });
+
+                formatted = formatted.replace(/\n/g, '<br>');
+                return formatted;
+            }
+
+            function loadChatHistory() {
+                fetch('/api/history')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.history && data.history.length > 0) {
+                        chatContainer.innerHTML = '';
+
+                        data.history.forEach(msg => {
+                            addMessageToChat(msg.role, msg.content);
+                            if (msg.role === 'assistant') {
+                                updateToolCounters(msg.content);
+                            }
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading chat history:', error);
+                });
+            }
+
+            function resetConversation() {
+                fetch('/api/reset', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        chatContainer.innerHTML = '';
+                        addMessageToChat('assistant',
+                            'Hello! I\'m your HR Assistant. I can help you plan your hiring process for your startup. How can I assist you today?'
+                        );
+
+                        jobDescCount = 0;
+                        interviewCount = 0;
+                        criteriaCount = 0;
+                        analyticsCount = 0;
+                        updateCounterDisplay();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error resetting conversation:', error);
+                });
+            }
+
+            function updateToolCounters(response) {
+                if (response.toLowerCase().includes('job description')) {
+                    jobDescCount++;
+                }
+                if (response.toLowerCase().includes('interview process')) {
+                    interviewCount++;
+                }
+                if (response.toLowerCase().includes('evaluation criteria')) {
+                    criteriaCount++;
+                }
+                if (response.toLowerCase().includes('analytics')) {
+                    analyticsCount++;
+                }
+                updateCounterDisplay();
+            }
+
+            function updateCounterDisplay() {
+                document.getElementById('job-desc-count').textContent = jobDescCount;
+                document.getElementById('interview-count').textContent = interviewCount;
+                document.getElementById('criteria-count').textContent = criteriaCount;
+                document.getElementById('analytics-count').textContent = analyticsCount;
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
